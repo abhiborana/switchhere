@@ -1,3 +1,4 @@
+import Navbar from "@/components/organisms/navbar";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -7,7 +8,12 @@ const AuthenticatedLayout = async ({ children }) => {
   if (!authCookie) {
     redirect("/auth");
   }
-  return <>{children}</>;
+  return (
+    <>
+      <Navbar />
+      {children}
+    </>
+  );
 };
 
 export default AuthenticatedLayout;

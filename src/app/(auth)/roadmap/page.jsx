@@ -1,7 +1,6 @@
 "use client";
 
 import Loading from "@/components/atoms/loading";
-import Navbar from "@/components/organisms/navbar";
 import RoadmapUi from "@/components/organisms/roadmap-ui";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -119,7 +118,6 @@ const RoadmapCreate = () => {
 
   return (
     <>
-      <Navbar />
       <main className="w-full flex-1 flex-col overflow-y-auto flex items-center py-4 gap-4 justify-center">
         {object ? (
           <>

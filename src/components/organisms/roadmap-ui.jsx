@@ -37,7 +37,7 @@ const RoadmapUi = ({ roadmap }) => {
     }
   };
 
-  return (
+  return !roadmap ? null : (
     <div className="w-full h-full overflow-y-auto">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-12">
