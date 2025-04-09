@@ -20,6 +20,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import useSwitchStore from "@/store";
 import { supabaseClient } from "@/supabase";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { compare, hash } from "bcryptjs";
@@ -30,6 +31,7 @@ import { z } from "zod";
 
 const Authentication = () => {
   const router = useRouter();
+  const dispatch = useSwitchStore((state) => state.dispatch);
   const form = useForm({
     resolver: zodResolver(authSchema),
     defaultValues: {
@@ -66,6 +68,16 @@ const Authentication = () => {
             name: user.name,
             id: user.id,
           });
+          dispatch({
+            type: "SET_STATE",
+            payload: {
+              user: {
+                email: user.email,
+                name: user.name,
+                id: user.id,
+              },
+            },
+          });
           router.push("/dashboard");
         } else {
           toast.error("Invalid email or password");
@@ -87,6 +99,16 @@ const Authentication = () => {
         email: user.email,
         name: user.name,
         id: user.id,
+      });
+      dispatch({
+        type: "SET_STATE",
+        payload: {
+          user: {
+            email: email,
+            name: name,
+            id: user.id,
+          },
+        },
       });
       router.push("/dashboard");
     }
