@@ -34,7 +34,10 @@ const Navbar = () => {
 
   return (
     <header className="px-4 py-3 w-full shadow border-b flex flex-wrap items-center gap-4 justify-between">
-      <Link href="/" className="text-2xl font-bold text-gray-800">
+      <Link
+        href={user ? "/dashboard" : "/"}
+        className="text-2xl font-bold text-gray-800"
+      >
         Switchhere
       </Link>
       <div className="flex flex-wrap items-center gap-4">

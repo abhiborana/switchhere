@@ -24,7 +24,7 @@ export default function RootLayout({ children }) {
         cz-shortcut-listen="true"
       >
         {children}
-        <Toaster position="top-center" />
+        <Toaster richColors position="top-center" />
       </body>
     </html>
   );
