@@ -48,14 +48,13 @@ const Authentication = () => {
       .eq("email", email)
       .single();
     if (error) {
-      console.log(error);
+      console.error(error);
       return false;
     }
     return data;
   };
 
   const onSubmit = async (data) => {
-    console.log(data);
     const { email, password, name } = data;
     const hashedPassword = await hash(password, 10);
     const user = await checkUser(email);
