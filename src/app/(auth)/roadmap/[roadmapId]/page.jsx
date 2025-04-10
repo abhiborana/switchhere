@@ -42,7 +42,7 @@ const RoadmapInfo = ({ params }) => {
 
   return (
     <main className="flex-1 w-full py-4 overflow-y-auto">
-      <RoadmapUi roadmap={roadmapData} />
+      <RoadmapUi roadmap={roadmapData} roadmapId={roadmapId} />
     </main>
   );
 };
