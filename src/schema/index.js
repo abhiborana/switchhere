@@ -7,16 +7,22 @@ export const roadmapSchema = z
       z.object({
         title: z.string().describe("The title of the step"),
         description: z.string().describe("The description of the step"),
-        priority: z.number().describe("The priority of the step"),
+        priority: z
+          .number()
+          .describe("The priority of the step in number 1, 2, 3"),
         resources: z.array(
           z.object({
             url: z
               .string()
-              .describe("The URL of the youtube video, website, or article"),
+              .describe(
+                "The valid URL of the official documentation or article or website, (NOT YOUTUBE LINK)",
+              ),
             type: z
               .string()
               .describe("The type of the resource, e.g., video, article"),
-            priority: z.number().describe("The priority of the resource"),
+            priority: z
+              .number()
+              .describe("The priority of the resource in number 1, 2, 3"),
           }),
         ),
       }),

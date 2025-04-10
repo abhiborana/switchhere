@@ -91,6 +91,7 @@ const RoadmapCreate = () => {
       toast.error("Error saving roadmap steps");
       console.error("Error saving roadmap steps:", stepsError);
       setStatus("error");
+      supabaseClient.from("roadmaps").delete().eq("id", roadmapSaved.id);
       return;
     }
 
@@ -110,6 +111,7 @@ const RoadmapCreate = () => {
       toast.error("Error saving roadmap resources");
       console.error("Error saving roadmap resources:", resourcesError);
       setStatus("error");
+      supabaseClient.from("roadmaps").delete().eq("id", roadmapSaved.id);
       return;
     }
     toast.success("Roadmap saved successfully!");
@@ -145,6 +147,7 @@ const RoadmapCreate = () => {
               roadmap={{
                 ...object,
               }}
+              disabled
             />
           </>
         ) : isLoading ? (

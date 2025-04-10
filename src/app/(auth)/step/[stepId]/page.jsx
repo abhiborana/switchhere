@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import useSwitchStore from "@/store";
 import { supabaseClient } from "@/supabase";
-import { getLinkPreview } from "link-preview-js";
 import {
   BookOpenIcon,
   CheckIcon,
@@ -49,7 +48,13 @@ const LearningPage = ({ params }) => {
               images: [null],
               favicons: [null],
             };
-          const meta = await getLinkPreview(url);
+          const meta = await fetch(`/api/link-preview`, {
+            method: "POST",
+            body: JSON.stringify({ url }),
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }).then((res) => res.json());
           return {
             ...resource,
             ...meta,
@@ -81,7 +86,10 @@ const LearningPage = ({ params }) => {
       console.error("Error marking attendance:", error);
       return;
     }
-    console.debug(`🚀 ~ handleMarkAttendance ~ data:`, data);
+    await supabaseClient
+      .from("continue_learning")
+      .delete()
+      .eq("step_id", stepId);
     setStepInfo(data);
     push(`/roadmap/${data.roadmap_id}`);
   };
@@ -141,7 +149,7 @@ const LearningPage = ({ params }) => {
           </Link>
         </Button>
         <h1 className="text-sm flex-1 line-clamp-1 break-all md:text-xl font-medium">
-          {stepInfo?.title}
+          {stepInfo?.title} - {stepInfo?.description}
         </h1>
         <Button
           disabled={stepInfo?.isCompleted}
@@ -160,12 +168,7 @@ const LearningPage = ({ params }) => {
       <div className="grid md:grid-cols-4 gap-4">
         <div className="md:col-span-3 col-span-1 w-full flex flex-col gap-4">
           <div className="w-full aspect-video bg-neutral-100 md:rounded-2xl rounded-md md:shadow"></div>
-          <p className="font-medium line-clamp-3 md:px-2">
-            Lorem ipsum dolor sit amet consectetur, adipisicing elit. A
-            doloribus assumenda accusantium inventore ipsa, debitis laboriosam
-            voluptas ullam! Incidunt blanditiis illum laudantium, quibusdam
-            ratione dolores voluptatibus perspiciatis totam accusamus pariatur!
-          </p>
+          <p className="font-medium line-clamp-3 md:px-2">{stepInfo?.title}</p>
         </div>
         <div className="col-span-1 flex flex-col gap-4">
           {resources.map((resource) => {
