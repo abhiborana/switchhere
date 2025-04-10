@@ -1,29 +1,10 @@
 "use client";
 
 import { Card } from "@/components/ui/card";
-import {
-  BookOpenIcon,
-  CircleCheckIcon,
-  ExternalLinkIcon,
-  GlobeIcon,
-  VideoIcon,
-} from "lucide-react";
+import { CircleCheckIcon } from "lucide-react";
 import Link from "next/link";
 
 const RoadmapUi = ({ roadmap, roadmapId }) => {
-  const getResourceIcon = (type) => {
-    switch (type) {
-      case "article":
-        return <BookOpenIcon className="size-4" />;
-      case "course":
-        return <VideoIcon className="size-4" />;
-      case "website":
-        return <GlobeIcon className="size-4" />;
-      default:
-        return <ExternalLinkIcon className="size-4" />;
-    }
-  };
-
   return !roadmap ? null : (
     <div className="w-full h-full overflow-y-auto">
       <div className="max-w-4xl mx-auto">
