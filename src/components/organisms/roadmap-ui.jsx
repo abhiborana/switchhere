@@ -88,9 +88,6 @@ const RoadmapUi = ({ roadmap, roadmapId, disabled = false }) => {
                     <p className="mt-2 text-gray-600 dark:text-gray-400">
                       {step?.description}
                     </p>
-                    <p className="mt-2 text-gray-600 dark:text-gray-400">
-                      {step?.resources?.length} Resources
-                    </p>
                   </Card>
                 </div>
               </div>

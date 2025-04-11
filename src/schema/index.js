@@ -3,6 +3,9 @@ import { z } from "zod";
 export const roadmapSchema = z
   .object({
     title: z.string().describe("The title of the roadmap"),
+    estimatedTime: z
+      .string()
+      .describe("The estimated time to complete the roadmap"),
     steps: z.array(
       z.object({
         title: z.string().describe("The title of the step"),
@@ -10,25 +13,15 @@ export const roadmapSchema = z
         priority: z
           .number()
           .describe("The priority of the step in number 1, 2, 3"),
-        resources: z.array(
-          z.object({
-            url: z
-              .string()
-              .describe(
-                "The valid URL of the official documentation or article or website, (NOT YOUTUBE LINK)",
-              ),
-            type: z
-              .string()
-              .describe("The type of the resource, e.g., video, article"),
-            priority: z
-              .number()
-              .describe("The priority of the resource in number 1, 2, 3"),
-          }),
-        ),
+        youtubeSearchQuery: z
+          .string()
+          .describe("The Youtube search query to get the best resources"),
       }),
     ),
   })
-  .describe("The customized roadmap for the user with steps and resources.");
+  .describe(
+    "The customized roadmap for the user with steps and search queries",
+  );
 
 export const roadmapFormSchema = z.object({
   toBecome: z.string().min(1, "Please enter a goal to become a"),

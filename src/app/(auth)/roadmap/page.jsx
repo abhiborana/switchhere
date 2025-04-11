@@ -60,6 +60,7 @@ const RoadmapCreate = () => {
       .from("roadmaps")
       .insert({
         title: object.title,
+        estimatedTime: object.estimatedTime,
         toBecome: form.getValues("toBecome"),
         currentExperience: form.getValues("currentExperience"),
         hoursPerDay: form.getValues("hoursPerDay"),
@@ -79,6 +80,7 @@ const RoadmapCreate = () => {
       title: step.title,
       description: step.description,
       priority: step.priority,
+      youtubeSearchQuery: step.youtubeSearchQuery,
       roadmap_id: roadmapSaved.id,
       user_id: user.id,
     }));
@@ -90,26 +92,6 @@ const RoadmapCreate = () => {
     if (stepsError) {
       toast.error("Error saving roadmap steps");
       console.error("Error saving roadmap steps:", stepsError);
-      setStatus("error");
-      supabaseClient.from("roadmaps").delete().eq("id", roadmapSaved.id);
-      return;
-    }
-
-    const resourcesWithStepId = object.steps.flatMap((step) => {
-      return step.resources.map((resource) => ({
-        ...resource,
-        step_id: stepsSaved.find((s) => s.priority === step.priority)?.id,
-      }));
-    });
-
-    // Save the roadmap resources to the database
-    const { data: resourcesSaved, error: resourcesError } = await supabaseClient
-      .from("resources")
-      .insert(resourcesWithStepId)
-      .select("id");
-    if (resourcesError) {
-      toast.error("Error saving roadmap resources");
-      console.error("Error saving roadmap resources:", resourcesError);
       setStatus("error");
       supabaseClient.from("roadmaps").delete().eq("id", roadmapSaved.id);
       return;
@@ -143,12 +125,7 @@ const RoadmapCreate = () => {
                 </Button>
               </Alert>
             ) : null}
-            <RoadmapUi
-              roadmap={{
-                ...object,
-              }}
-              disabled
-            />
+            <RoadmapUi roadmap={object} disabled />
           </>
         ) : isLoading ? (
           <div className="flex flex-col items-center justify-center gap-4">

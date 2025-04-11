@@ -1,212 +1,167 @@
 "use client";
 
+import { getYoutubeResults } from "@/actions/external";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import useSwitchStore from "@/store";
 import { supabaseClient } from "@/supabase";
-import {
-  BookOpenIcon,
-  CheckIcon,
-  ChevronLeftIcon,
-  ExternalLinkIcon,
-  GlobeIcon,
-  TriangleAlertIcon,
-  VideoIcon,
-} from "lucide-react";
+import { AlertTriangleIcon, CheckIcon, ChevronLeftIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { use, useEffect, useState } from "react";
 
 const LearningPage = ({ params }) => {
   const { stepId } = use(params);
-  const { push } = useRouter();
   const user = useSwitchStore((state) => state.user);
-  const [resources, setResources] = useState([]);
+  const [status, setStatus] = useState("loading");
   const [stepInfo, setStepInfo] = useState(null);
+  const [videos, setVideos] = useState([]);
+  const [currentVideo, setCurrentVideo] = useState(null);
 
-  const getResourcesAndAddMeta = async () => {
+  const fetchStepInfo = async () => {
     const { data, error } = await supabaseClient
-      .from("resources")
-      .select("*, roadmap_steps(*)")
-      .eq("step_id", stepId);
-
+      .from("roadmap_steps")
+      .select("*")
+      .eq("id", stepId)
+      .eq("user_id", user.id)
+      .single();
     if (error) {
-      console.error("Error fetching resources:", error);
+      console.error("Error fetching step info:", error);
       return;
     }
-
-    const resourcesWithMeta = await Promise.all(
-      data.map(async (resource) => {
-        try {
-          const { url } = resource;
-          if (url.includes("youtube"))
-            return {
-              ...resource,
-              title: "Youtube Video",
-              description: "Youtube Video",
-              images: [null],
-              favicons: [null],
-            };
-          const meta = await fetch(`/api/link-preview`, {
-            method: "POST",
-            body: JSON.stringify({ url }),
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }).then((res) => res.json());
-          return {
-            ...resource,
-            ...meta,
-          };
-        } catch (error) {
-          return {
-            ...resource,
-            title: null,
-            description: null,
-            images: [null],
-            favicons: [null],
-          };
-        }
-      }),
-    );
-    setResources(resourcesWithMeta);
-    setStepInfo(data[0]?.roadmap_steps);
+    setStepInfo(data);
+    setStatus("success");
   };
 
-  const handleMarkAttendance = async () => {
-    // Set the step to isCompleted & redirect to /roadmap/roadmapId
+  const fetchVideos = async () => {
+    setStatus("loading");
     const { data, error } = await supabaseClient
+      .from("youtube")
+      .select("*")
+      .eq("step_id", stepId);
+    if (error) {
+      console.error("Error fetching videos:", error);
+      const res = await getYoutubeResults(
+        stepInfo?.youtubeSearchQuery ?? stepInfo?.title,
+      );
+      const videos = res.items.map((video) => ({
+        title: video.snippet.title,
+        description: video.snippet.description,
+        videoId: video.id.videoId,
+        step_id: stepId,
+      }));
+      await supabaseClient.from("videos").insert(videos);
+      setVideos(videos);
+      setCurrentVideo(videos[0]);
+      setStatus("success");
+    }
+    setVideos(data);
+    setCurrentVideo(data[0]);
+    setStatus("success");
+  };
+
+  const handleMarkAsCompleted = async () => {
+    const { error } = await supabaseClient
       .from("roadmap_steps")
       .update({ isCompleted: true })
       .eq("id", stepId)
-      .select("*")
-      .single();
+      .eq("user_id", user.id);
     if (error) {
-      console.error("Error marking attendance:", error);
-      return;
-    }
-    await supabaseClient
-      .from("continue_learning")
-      .delete()
-      .eq("step_id", stepId);
-    setStepInfo(data);
-    push(`/roadmap/${data.roadmap_id}`);
-  };
-
-  const getResourceIcon = (type) => {
-    switch (type) {
-      case "article":
-        return BookOpenIcon;
-      case "course":
-        return VideoIcon;
-      case "website":
-        return GlobeIcon;
-      default:
-        return ExternalLinkIcon;
+      console.error("Error updating step:", error);
+    } else {
+      setStepInfo({ ...stepInfo, isCompleted: true });
     }
   };
 
   useEffect(() => {
-    if (!stepId || !user) return;
-    getResourcesAndAddMeta();
-  }, [stepId, user]);
+    if (!user || !stepId) return;
+    fetchStepInfo();
+  }, [stepId]);
 
-  return !stepInfo ? (
-    <main className="flex flex-col gap-4 w-full flex-1 md:p-4 py-4 px-2 overflow-y-auto">
-      <div className="flex items-center gap-4">
-        <Button size={"icon"} variant={"outline"} asChild>
-          <Link href="/dashboard">
-            <ChevronLeftIcon className="size-4" />
-          </Link>
-        </Button>
-        <Skeleton className="h-6 w-1/2" />
-      </div>
-      <div className="grid md:grid-cols-4 gap-4">
-        <div className="md:col-span-3 col-span-1 w-full flex flex-col gap-4">
-          <div className="w-full aspect-video bg-neutral-100 md:rounded-2xl rounded-md md:shadow"></div>
-          <Skeleton className="h-6 w-full" />
+  useEffect(() => {
+    if (videos.length || currentVideo || !stepInfo) return;
+    fetchVideos();
+  }, [stepInfo, videos]);
+
+  return status === "success" ? (
+    <main className="flex flex-col gap-4 w-full h-full flex-1 overflow-auto">
+      <div className="flex items-center flex-wrap justify-between gap-4 p-4">
+        <div className="flex items-center gap-2">
+          <Button variant={"outline"} asChild>
+            <Link href={`/roadmap/${stepInfo.roadmap_id}`}>
+              <ChevronLeftIcon />
+            </Link>
+          </Button>
+          <h1 className="md:text-xl font-semibold">{stepInfo.title}</h1>
         </div>
-        <div className="col-span-1 flex flex-col gap-4">
-          <Skeleton className="aspect-video w-full" />
-          <Skeleton className="aspect-video w-full" />
-          <Skeleton className="aspect-video w-full" />
-        </div>
-      </div>
-    </main>
-  ) : (
-    <main className="flex flex-col gap-4 w-full flex-1 md:p-4 py-4 px-2 overflow-y-auto">
-      <div className="flex items-center gap-4">
-        <Button size={"icon"} variant={"outline"} asChild>
-          <Link
-            href={
-              stepInfo?.roadmap_id
-                ? `/roadmap/${stepInfo?.roadmap_id}`
-                : `/dashboard`
-            }
-          >
-            <ChevronLeftIcon className="size-4" />
-          </Link>
-        </Button>
-        <h1 className="text-sm flex-1 line-clamp-1 break-all md:text-xl font-medium">
-          {stepInfo?.title} - {stepInfo?.description}
-        </h1>
-        <Button
-          disabled={stepInfo?.isCompleted}
-          onClick={handleMarkAttendance}
-          className={"ml-auto rounded-full"}
-          variant={"outline"}
-        >
-          {stepInfo?.isCompleted ? (
+        {stepInfo.isCompleted ? (
+          <Button variant={"outline"} disabled>
             <CheckIcon className="size-4 text-green-500" />
-          ) : (
-            <TriangleAlertIcon className="size-4 text-yellow-500" />
-          )}
-          {stepInfo?.isCompleted ? "Completed" : "Mark as Completed"}
-        </Button>
+            Completed
+          </Button>
+        ) : (
+          <Button variant={"outline"} onClick={handleMarkAsCompleted}>
+            <AlertTriangleIcon className="size-4 text-amber-500" />
+            Mark as Completed
+          </Button>
+        )}
       </div>
-      <div className="grid md:grid-cols-4 gap-4">
-        <div className="md:col-span-3 col-span-1 w-full flex flex-col gap-4">
-          <div className="w-full aspect-video bg-neutral-100 md:rounded-2xl rounded-md md:shadow"></div>
-          <p className="font-medium line-clamp-3 md:px-2">{stepInfo?.title}</p>
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+        <div className="w-full h-full col-span-1 md:col-span-3 md:pl-4 flex flex-col">
+          <div className="w-full aspect-video md:rounded-2xl overflow-hidden">
+            <iframe
+              src={`https://www.youtube.com/embed/${currentVideo?.videoId}`}
+              title={currentVideo?.title}
+              frameBorder="0"
+              referrerPolicy="strict-origin-when-cross-origin"
+              allowFullscreen
+              className="w-full h-full"
+            />
+          </div>
+          <div className="flex flex-col p-2">
+            <p className="text-lg">{currentVideo?.title}</p>
+            <p className="text-sm text-muted-foreground">
+              {currentVideo?.description}
+            </p>
+          </div>
         </div>
-        <div className="col-span-1 flex flex-col gap-4">
-          {resources.map((resource) => {
-            const Icon = getResourceIcon(resource.type);
-            return (
-              <Link
-                key={resource.id}
-                className="w-full flex flex-col gap-1 overflow-hidden rounded-xl transition-all duration-300 hover:bg-neutral-100 p-2 shadow border border-neutral-200 dark:border-neutral-800"
-                href={resource.url}
-                target="_blank"
-                rel="noopener noreferrer"
+        <div className="col-span-1 w-full flex flex-col gap-4">
+          {videos.map((video) =>
+            currentVideo?.videoId === video.videoId ? null : (
+              <div
+                key={video.videoId}
+                className={
+                  "flex flex-col w-full cursor-pointer shrink-0 hover:bg-neutral-100 rounded-md p-2 md:rounded-2xl"
+                }
+                onClick={() => setCurrentVideo(video)}
               >
-                {/* iframe and URL */}
-                <div className="flex-1 relative rounded-md w-full aspect-video overflow-hidden">
+                <div className="w-full aspect-video relative rounded-xl overflow-hidden">
                   <Image
-                    src={
-                      resource?.images?.[0] ||
-                      resource?.favicons?.[0] ||
-                      `https://api.dicebear.com/9.x/glass/svg?seed=${resource.url}`
-                    }
-                    alt={resource?.title || resource?.url}
-                    unoptimized
+                    src={`https://img.youtube.com/vi/${video.videoId}/hqdefault.jpg`}
+                    alt={video.title}
                     fill
+                    unoptimized
                     className="object-cover"
                   />
                 </div>
-                <div className="p-2 flex flex-col gap-2">
-                  <p className="w-full line-clamp-1 text-sm break-all flex items-center gap-2">
-                    <Icon className="inline-flex size-4 shrink-0" />
-                    {resource.title || resource.url}
-                  </p>
-                  <p className="w-full text-xs break-all line-clamp-1 text-muted-foreground">
-                    {resource.description || resource.url}
-                  </p>
-                </div>
-              </Link>
-            );
-          })}
+                <p className="w-full text-sm line-clamp-2 p-1">{video.title}</p>
+              </div>
+            ),
+          )}
+        </div>
+      </div>
+    </main>
+  ) : status === "error" ? (
+    <div>Error</div>
+  ) : (
+    <main className="flex flex-col gap-4 w-full p-4">
+      <Skeleton className="h-8 w-1/2" />
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+        <Skeleton className="aspect-video w-full col-span-1 md:col-span-3" />
+        <div className="col-span-1 w-full flex flex-col gap-4">
+          <Skeleton className="aspect-video w-full" />
+          <Skeleton className="aspect-video w-full" />
+          <Skeleton className="aspect-video w-full" />
         </div>
       </div>
     </main>
