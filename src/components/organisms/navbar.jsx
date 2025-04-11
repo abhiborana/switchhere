@@ -43,9 +43,6 @@ const Navbar = () => {
       <div className="flex flex-wrap items-center gap-4">
         {user ? (
           <>
-            <Button asChild>
-              <Link href="/dashboard">Dashboard</Link>
-            </Button>
             <Button variant={"outline"} onClick={handleLogout}>
               <LogOutIcon className="size-4" />
               Logout

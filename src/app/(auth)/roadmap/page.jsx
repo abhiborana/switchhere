@@ -44,6 +44,7 @@ const RoadmapCreate = () => {
       console.error("Error:", error);
     },
   });
+  console.log("🚀 ~ RoadmapCreate ~ object:", object);
 
   const form = useForm({
     resolver: zodResolver(roadmapFormSchema),
@@ -76,7 +77,7 @@ const RoadmapCreate = () => {
     }
 
     // Save the roadmap steps to the database
-    const steps = object.steps.map((step) => ({
+    const steps = object.daily_tasks.map((step) => ({
       title: step.title,
       description: step.description,
       priority: step.priority,
@@ -85,7 +86,7 @@ const RoadmapCreate = () => {
       user_id: user.id,
     }));
 
-    const { data: stepsSaved, error: stepsError } = await supabaseClient
+    const { error: stepsError } = await supabaseClient
       .from("roadmap_steps")
       .insert(steps)
       .select("id, priority");
@@ -112,7 +113,7 @@ const RoadmapCreate = () => {
                   "w-fit items-center flex gap-4 border-sky-500 bg-sky-50 text-sky-600 "
                 }
               >
-                <SaveIcon className="h-4 w-4" />
+                <SaveIcon className="h-4 w-4 shrink-0" />
                 <p>Do you want to save this roadmap & get started with it?</p>
                 <Button
                   variant={"outline"}

@@ -6,21 +6,27 @@ export const roadmapSchema = z
     estimatedTime: z
       .string()
       .describe("The estimated time to complete the roadmap"),
-    steps: z.array(
-      z.object({
-        title: z.string().describe("The title of the step"),
-        description: z.string().describe("The description of the step"),
-        priority: z
-          .number()
-          .describe("The priority of the step in number 1, 2, 3"),
-        youtubeSearchQuery: z
-          .string()
-          .describe("The Youtube search query to get the best resources"),
-      }),
-    ),
+    daily_tasks: z
+      .array(
+        z.object({
+          title: z.string().describe("The title of the step"),
+          description: z.string().describe("The description of the step"),
+          priority: z
+            .number()
+            .describe(
+              "The priority of the step in number 1, 2, 3, Make sure its continuous & not duplicate",
+            ),
+          youtubeSearchQuery: z
+            .string()
+            .describe("The Youtube search query to get the best resources"),
+        }),
+      )
+      .describe(
+        "The daily tasks of the roadmap, which includes title, description, priority, and youtube search query",
+      ),
   })
   .describe(
-    "The customized roadmap for the user with steps and search queries",
+    "The customized roadmap for the user with daily tasks and search queries",
   );
 
 export const roadmapFormSchema = z.object({

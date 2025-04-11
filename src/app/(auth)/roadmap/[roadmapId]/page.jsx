@@ -23,16 +23,17 @@ const RoadmapInfo = ({ params }) => {
         } else {
           supabaseClient
             .from("roadmaps")
-            .select("title")
+            .select("title, estimatedTime")
             .eq("id", roadmapId)
             .single()
-            .then(({ data: roadmapTitle, error }) => {
+            .then(({ data: roadmap, error }) => {
               if (error) {
                 console.error("Error fetching roadmap title:", error);
               } else {
                 setRoadmapData({
-                  title: roadmapTitle.title,
-                  steps: data,
+                  title: roadmap.title,
+                  daily_tasks: data,
+                  estimatedTime: roadmap?.estimatedTime,
                 });
               }
             });

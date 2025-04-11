@@ -50,48 +50,20 @@ const Dashboard = () => {
   }, [user]);
 
   return (
-    <>
-      <main className="flex flex-col gap-4 flex-1 w-full h-full p-4 overflow-y-auto">
+    <main className="flex-1 w-full overflow-y-auto">
+      <div className="flex flex-col gap-4 flex-1 w-full p-4">
         {continueLearning.length ? (
           <>
             <div className="flex gap-4 items-center justify-between">
-              <h2 className="text-xl font-semibold">Continue Learning</h2>
+              <h2 className="text-xl font-semibold">
+                Continue Learning Topics
+              </h2>
             </div>
-            <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+            <div className="flex gap-4 w-full overflow-x-auto snap-x snap-always">
               {continueLearning
                 .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
                 .map((roadmap) => (
-                  <Link key={roadmap.id} href={`/step/${roadmap.step_id}`}>
-                    <Card className="cursor-pointer">
-                      <CardHeader>
-                        <CardTitle
-                          className={
-                            "flex flex-wrap items-center gap-2 justify-between"
-                          }
-                        >
-                          {roadmap.roadmap_steps.title}
-                        </CardTitle>
-                        <CardDescription>
-                          {roadmap.roadmaps.title}
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent
-                        className={"gap-4 flex flex-wrap items-center"}
-                      >
-                        <Badge variant={"secondary"}>
-                          {formatDistanceToNowStrict(roadmap.created_at, {
-                            addSuffix: true,
-                            includeSeconds: true,
-                          })}
-                        </Badge>
-                        <Badge variant={"outline"}>
-                          {roadmap.roadmap_steps.isCompleted
-                            ? "Completed"
-                            : "In Progress"}
-                        </Badge>
-                      </CardContent>
-                    </Card>
-                  </Link>
+                  <StepCard key={roadmap.id} roadmap={roadmap} />
                 ))}
             </div>
           </>
@@ -105,11 +77,15 @@ const Dashboard = () => {
             </Link>
           </Button>
         </div>
-        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+        <div className="flex gap-4 w-full flex-wrap">
           {userRoadmaps.length ? (
             userRoadmaps.map((roadmap) => (
-              <Link key={roadmap.id} href={`/roadmap/${roadmap.id}`}>
-                <Card className="cursor-pointer">
+              <Link
+                key={roadmap.id}
+                href={`/roadmap/${roadmap.id}`}
+                className="w-xs shrink-0 aspect-video"
+              >
+                <Card>
                   <CardHeader>
                     <CardTitle
                       className={
@@ -124,9 +100,7 @@ const Dashboard = () => {
                     <CardDescription>{roadmap.title}</CardDescription>
                   </CardHeader>
                   <CardContent className={"gap-4 flex flex-wrap items-center"}>
-                    <Badge variant={"secondary"}>
-                      {roadmap.hoursPerDay}hrs/day
-                    </Badge>
+                    <Badge variant={"secondary"}>{roadmap.estimatedTime}</Badge>
                     <Badge variant={"secondary"}>
                       {formatDistanceToNowStrict(roadmap.created_at, {
                         addSuffix: true,
@@ -142,7 +116,7 @@ const Dashboard = () => {
             ))
           ) : (
             <Link href={"/roadmap"}>
-              <Card className="cursor-pointer">
+              <Card>
                 <CardHeader>
                   <CardTitle>No roadmaps found</CardTitle>
                   <CardDescription>
@@ -158,9 +132,42 @@ const Dashboard = () => {
             </Link>
           )}
         </div>
-      </main>
-    </>
+      </div>
+    </main>
   );
 };
 
 export default Dashboard;
+
+const StepCard = ({ roadmap }) => {
+  return (
+    <Link
+      href={`/step/${roadmap.step_id}`}
+      className="w-xs shrink-0 aspect-video snap-center"
+    >
+      <Card>
+        <CardHeader>
+          <CardTitle
+            className={"flex flex-wrap items-center gap-2 justify-between"}
+          >
+            {roadmap.roadmap_steps.title}
+          </CardTitle>
+          <CardDescription>{roadmap.roadmaps.title}</CardDescription>
+        </CardHeader>
+        <CardContent className={"gap-4 flex flex-wrap items-center"}>
+          <Badge variant={"secondary"}>
+            {formatDistanceToNowStrict(roadmap.created_at, {
+              addSuffix: true,
+              includeSeconds: true,
+            })}
+          </Badge>
+          {roadmap.roadmap_steps.isCompleted ? (
+            <Badge variant={"secondary"}>Completed</Badge>
+          ) : (
+            <Badge variant={"outline"}>In Progress</Badge>
+          )}
+        </CardContent>
+      </Card>
+    </Link>
+  );
+};
