@@ -225,12 +225,14 @@ const Switchhere = () => {
               </div>
             </div>
             <div className="md:w-1/2 relative">
-              <div className="bg-white/10 backdrop-blur-sm p-6 rounded-2xl shadow-2xl border border-white/20">
-                <div className="aspect-video bg-indigo-200/20 rounded-lg flex items-center justify-center">
-                  <span className="text-lg text-white/70">
-                    AI Career Dashboard Preview
-                  </span>
-                </div>
+              <div className="backdrop-blur-sm p-1 md:p-4 rounded-2xl shadow-2xl border border-white/20 aspect-video bg-indigo-200/20 flex items-center overflow-hidden justify-center">
+                <video
+                  src="/switchhere.mp4"
+                  className="w-full h-full object-fill rounded-lg"
+                  autoPlay
+                  controlsList=""
+                  controls
+                ></video>
               </div>
               <div className="absolute -top-6 -right-6 bg-yellow-400 text-indigo-900 py-2 px-4 rounded-full font-bold transform rotate-6">
                 AI Powered
