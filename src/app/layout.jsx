@@ -8,7 +8,7 @@ const geist = Geist({
 });
 
 export const metadata = {
-  title: "Switchhere - AI career switch coach",
+  title: "Switchhere - your career switch guide",
   description:
     "Switchhere helps people pivot or upgrade their careers through hyper-personalized, AI-generated roadmaps — built uniquely for them, with real-time coaching, skill-tracking, and job-focused outcomes.",
 };
