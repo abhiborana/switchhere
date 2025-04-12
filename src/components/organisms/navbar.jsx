@@ -30,6 +30,9 @@ const Navbar = () => {
         router.push("/dashboard");
       }
     }
+    if (user && pathname == "/auth") {
+      router.push("/dashboard");
+    }
   }, [user, pathname, router, dispatch]);
 
   return (

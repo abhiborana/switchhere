@@ -18,7 +18,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body
         className={cn(
-          "antialiased flex flex-col relative w-screen h-dvh overflow-hidden",
+          "antialiased flex flex-col relative w-screen h-dvh overflow-hidden scroll-smooth",
           geist.className,
         )}
         cz-shortcut-listen="true"

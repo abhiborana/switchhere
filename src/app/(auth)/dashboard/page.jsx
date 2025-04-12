@@ -70,12 +70,14 @@ const Dashboard = () => {
         ) : null}
         <div className="flex gap-4 items-center justify-between">
           <h2 className="text-xl font-semibold">Your Roadmaps</h2>
-          <Button asChild variant={"outline"} className="w-fit">
-            <Link href={"/roadmap"}>
-              <PlusIcon />
-              New Roadmap
-            </Link>
-          </Button>
+          {userRoadmaps.length >= 5 ? null : (
+            <Button asChild variant={"outline"} className="w-fit">
+              <Link href={"/roadmap"}>
+                <PlusIcon />
+                New Roadmap
+              </Link>
+            </Button>
+          )}
         </div>
         <div className="flex gap-4 w-full flex-wrap">
           {userRoadmaps.length ? (

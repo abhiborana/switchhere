@@ -44,7 +44,6 @@ const RoadmapCreate = () => {
       console.error("Error:", error);
     },
   });
-  console.log("🚀 ~ RoadmapCreate ~ object:", object);
 
   const form = useForm({
     resolver: zodResolver(roadmapFormSchema),
@@ -180,7 +179,6 @@ const RoadmapCreate = () => {
                             }}
                           />
                         </FormControl>
-                        <FormMessage />
                       </FormItem>
                     )}
                   />
@@ -198,7 +196,6 @@ const RoadmapCreate = () => {
                             {...field}
                           />
                         </FormControl>
-                        <FormMessage />
                       </FormItem>
                     )}
                   />
@@ -209,8 +206,12 @@ const RoadmapCreate = () => {
                         Go back
                       </Link>
                     </Button>
-                    <Button disabled={isLoading} type="submit">
-                      <WandSparklesIcon className="text-sky-500" />
+                    <Button
+                      disabled={isLoading}
+                      type="submit"
+                      className={"bg-indigo-600 hover:bg-indigo-700 text-white"}
+                    >
+                      <WandSparklesIcon className="" />
                       Generate
                     </Button>
                   </div>

@@ -43,14 +43,15 @@ const RoadmapUi = ({ roadmap, roadmapId, disabled = false }) => {
   }, [roadmap]);
 
   useEffect(() => {
-    if (!roadmap) return;
-    const incomplete = roadmap.daily_tasks.find(
+    if (!roadmap || !roadmapId) return;
+    const incomplete = roadmap?.daily_tasks?.find(
       (step) => !step.isCompleted,
     )?.id;
-    document.getElementById(incomplete).scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
+    if (incomplete)
+      document.getElementById(incomplete).scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
     if (completedPercentage === 100 && !roadmap?.isCompleted) {
       // update roadmap to completed
       supabaseClient

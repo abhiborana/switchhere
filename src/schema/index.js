@@ -30,7 +30,7 @@ export const roadmapSchema = z
   );
 
 export const roadmapFormSchema = z.object({
-  toBecome: z.string().min(1, "Please enter a goal to become a"),
+  toBecome: z.string().min(1, "Please enter a goal to become"),
   hoursPerDay: z
     .number()
     .min(1, "Please enter hours per day")
