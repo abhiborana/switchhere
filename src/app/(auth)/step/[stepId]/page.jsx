@@ -30,7 +30,7 @@ const LearningPage = ({ params }) => {
       .eq("user_id", user.id)
       .single();
     if (error) {
-      console.error("Error fetching step info:", error);
+      console.debug("Error fetching step info:", error);
       return;
     }
     setStepInfo(data);
@@ -83,7 +83,7 @@ const LearningPage = ({ params }) => {
       .eq("id", stepId)
       .eq("user_id", user.id);
     if (error) {
-      console.error("Error updating step:", error);
+      console.debug("Error updating step:", error);
     } else {
       toast.success("Marked as completed!");
       await supabaseClient

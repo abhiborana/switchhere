@@ -37,3 +37,19 @@ export const roadmapFormSchema = z.object({
     .max(24, "Max 24 hours"),
   currentExperience: z.string().min(1, "Please enter your current experience"),
 });
+
+export const trendingCareersSchema = z.object({
+  trendingCareers: z.array(
+    z.object({
+      toBecome: z.string().describe("The title of the roadmap"),
+      hoursPerDay: z
+        .number()
+        .describe("The estimated time needed per day (in hours 1, 2, 3)"),
+      currentExperience: z
+        .string()
+        .describe(
+          "The current experience of user ('Student' or 'Professional')",
+        ),
+    }),
+  ),
+});

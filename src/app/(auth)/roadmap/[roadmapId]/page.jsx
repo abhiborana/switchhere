@@ -19,7 +19,7 @@ const RoadmapInfo = ({ params }) => {
       .eq("user_id", user.id)
       .then(({ data, error }) => {
         if (error) {
-          console.error("Error fetching roadmap:", error);
+          console.debug("Error fetching roadmap:", error);
         } else {
           supabaseClient
             .from("roadmaps")
@@ -28,7 +28,7 @@ const RoadmapInfo = ({ params }) => {
             .single()
             .then(({ data: roadmap, error }) => {
               if (error) {
-                console.error("Error fetching roadmap title:", error);
+                console.debug("Error fetching roadmap title:", error);
               } else {
                 setRoadmapData({
                   title: roadmap.title,

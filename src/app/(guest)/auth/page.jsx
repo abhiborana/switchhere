@@ -48,7 +48,7 @@ const Authentication = () => {
       .eq("email", email)
       .single();
     if (error) {
-      console.error(error);
+      console.debug(error);
       return false;
     }
     return data;
@@ -58,6 +58,7 @@ const Authentication = () => {
     const { email, password, name } = data;
     const hashedPassword = await hash(password, 10);
     const user = await checkUser(email);
+    console.debug(`🚀 ~ onSubmit ~ user:`, user);
     if (user) {
       compare(password, user.password, async (err, result) => {
         if (result) {
@@ -87,11 +88,15 @@ const Authentication = () => {
         toast.error("Please enter your name to sign up");
         return;
       }
-      const { error } = await supabaseClient.from("users").insert({
-        email: email,
-        password: hashedPassword,
-        name: name,
-      });
+      const { data: user, error } = await supabaseClient
+        .from("users")
+        .insert({
+          email: email,
+          password: hashedPassword,
+          name: name,
+        })
+        .select("name, email, id")
+        .single();
       if (error) return toast.error("Error creating user");
       toast.success("User created successfully");
       await generateToken({

@@ -3,14 +3,16 @@
 import { cn } from "@/lib/utils";
 import useSwitchStore from "@/store";
 import { supabaseClient } from "@/supabase";
+import { ChevronRightIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { toast } from "sonner";
 import { Badge } from "../ui/badge";
 
 const RoadmapUi = ({ roadmap, roadmapId, disabled = false }) => {
   const { push } = useRouter();
   const user = useSwitchStore((state) => state.user);
+  const confettiRef = useRef(null);
 
   const handleOnClick = async (step) => {
     if (disabled) {
@@ -28,7 +30,7 @@ const RoadmapUi = ({ roadmap, roadmapId, disabled = false }) => {
           })
           .select();
       } catch (error) {
-        console.error("Error inserting continue learning:", error);
+        console.debug("Error inserting continue learning:", error);
       }
     }
     push(`/step/${step.id}`);
@@ -60,14 +62,19 @@ const RoadmapUi = ({ roadmap, roadmapId, disabled = false }) => {
         .eq("id", roadmapId)
         .then(({ error }) => {
           if (error) {
-            console.error("Error updating roadmap:", error);
+            console.debug("Error updating roadmap:", error);
           }
+          confettiRef.current?.fire({});
         });
     }
   }, [roadmap]);
 
   return !roadmap ? null : (
-    <div className="overflow-y-auto container mx-auto max-w-7xl">
+    <div className="overflow-y-auto container mx-auto max-w-7xl relative">
+      <Confetti
+        ref={confettiRef}
+        className="absolute left-0 top-0 z-0 size-full"
+      />
       <div className="text-center">
         <h1 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-sky-600 to-sky-500 bg-clip-text text-transparent">
           {roadmap.title}
@@ -107,7 +114,12 @@ const RoadmapUi = ({ roadmap, roadmapId, disabled = false }) => {
                 index % 2 === 0 ? "self-end" : "",
               )}
             >
-              <p className="font-medium text-lg">{step.title}</p>
+              <p className="font-medium text-lg flex items-center gap-2 justify-between">
+                {step.title}{" "}
+                {disabled ? null : (
+                  <ChevronRightIcon className="inline-flex size-4" />
+                )}
+              </p>
               <p className="text-muted-foreground text-sm">
                 {step.description}
               </p>

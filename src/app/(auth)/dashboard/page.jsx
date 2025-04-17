@@ -1,5 +1,6 @@
 "use client";
 
+import { BorderBeam } from "@/components/magicui/border-beam";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,9 +17,11 @@ import { formatDistanceToNowStrict } from "date-fns";
 import { motion } from "framer-motion";
 import { PlusIcon } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 
-const Dashboard = () => {
+const Dashboard = ({ searchParams }) => {
+  const { new: newRoadmap = null } = use(searchParams);
+
   const user = useSwitchStore((state) => state.user);
   const [status, setStatus] = useState(null);
   const [userRoadmaps, setUserRoadmaps] = useState([]);
@@ -33,7 +36,7 @@ const Dashboard = () => {
       .eq("user_id", user.id)
       .then(({ data, error }) => {
         if (error) {
-          console.error("Error fetching roadmaps:", error);
+          console.debug("Error fetching roadmaps:", error);
         } else {
           setContinueLearning(data);
         }
@@ -46,7 +49,7 @@ const Dashboard = () => {
       .eq("user_id", user.id)
       .then(({ data, error }) => {
         if (error) {
-          console.error("Error fetching roadmaps:", error);
+          console.debug("Error fetching roadmaps:", error);
           setStatus("error");
         } else {
           setUserRoadmaps(data);
@@ -100,7 +103,7 @@ const Dashboard = () => {
                   className="w-xs shrink-0 aspect-video"
                 >
                   <Link href={`/roadmap/${roadmap.id}`}>
-                    <Card>
+                    <Card className={"relative"}>
                       <CardHeader>
                         <CardTitle
                           className={
@@ -130,6 +133,9 @@ const Dashboard = () => {
                     {roadmap.hoursPerDay}hrs/day
                     </div> */}
                       </CardContent>
+                      {newRoadmap === roadmap.id ? (
+                        <BorderBeam duration={8} size={100} />
+                      ) : null}
                     </Card>
                   </Link>
                 </motion.div>

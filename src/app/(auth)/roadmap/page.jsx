@@ -1,6 +1,7 @@
 "use client";
 
-import Loading from "@/components/atoms/loading";
+import { getTrendingCareers } from "@/actions/ai";
+import { BorderBeam } from "@/components/magicui/border-beam";
 import RoadmapUi from "@/components/organisms/roadmap-ui";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -20,6 +21,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import Ripple from "@/components/ui/ripple";
 import { roadmapFormSchema } from "@/schema";
 import useSwitchStore from "@/store";
 import { supabaseClient } from "@/supabase";
@@ -27,13 +29,19 @@ import { experimental_useObject } from "@ai-sdk/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeftIcon, SaveIcon, WandSparklesIcon } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 const RoadmapCreate = () => {
+  const router = useRouter();
+
   const user = useSwitchStore((state) => state.user);
   const [status, setStatus] = useState(null);
+
+  const [trending, setTrending] = useState([]);
+  console.debug(`🚀 ~ RoadmapCreate ~ trending:`, trending);
 
   const { isLoading, submit, object } = experimental_useObject({
     api: "/api/roadmap",
@@ -41,7 +49,7 @@ const RoadmapCreate = () => {
       toast.success("Roadmap generated successfully!");
     },
     onError: (error) => {
-      console.error("Error:", error);
+      console.debug("Error:", error);
     },
   });
 
@@ -70,7 +78,7 @@ const RoadmapCreate = () => {
       .single();
     if (error) {
       toast.error("Error saving roadmap");
-      console.error("Error saving roadmap:", error);
+      console.debug("Error saving roadmap:", error);
       setStatus("error");
       return;
     }
@@ -91,14 +99,21 @@ const RoadmapCreate = () => {
       .select("id, priority");
     if (stepsError) {
       toast.error("Error saving roadmap steps");
-      console.error("Error saving roadmap steps:", stepsError);
+      console.debug("Error saving roadmap steps:", stepsError);
       setStatus("error");
       supabaseClient.from("roadmaps").delete().eq("id", roadmapSaved.id);
       return;
     }
     toast.success("Roadmap saved successfully!");
     setStatus("success");
+    router.push(`/dashboard?new=${roadmapSaved.id}`);
   };
+
+  useEffect(() => {
+    getTrendingCareers().then(({ trendingCareers }) => {
+      setTrending(trendingCareers);
+    });
+  }, []);
 
   return (
     <>
@@ -129,11 +144,10 @@ const RoadmapCreate = () => {
           </>
         ) : isLoading ? (
           <div className="flex flex-col items-center justify-center gap-4">
-            <Loading />
-            <p>Generating your roadmap... This may take a few seconds.</p>
+            <Ripple className={"w-40 h-40"} />
           </div>
         ) : (
-          <Card className="w-full max-w-sm shadow-2xl">
+          <Card className="w-full max-w-sm shadow-2xl relative">
             <CardHeader>
               <CardTitle>Create roadmap</CardTitle>
               <CardDescription>
@@ -218,6 +232,7 @@ const RoadmapCreate = () => {
                 </form>
               </Form>
             </CardContent>
+            <BorderBeam duration={8} size={100} />
           </Card>
         )}
       </main>
