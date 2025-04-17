@@ -8,9 +8,39 @@ const geist = Geist({
 });
 
 export const metadata = {
+  generator: "Next.js",
+  applicationName: "Switchhere",
+  robots: {
+    index: true,
+    follow: true,
+    "max-snippet": -1,
+    "max-image-preview": "large",
+    "max-video-preview": -1,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
+  referrer: "no-referrer-when-downgrade",
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+  },
   title: "Switchhere - your career switch guide",
   description:
-    "Switchhere helps people pivot or upgrade their careers through hyper-personalized, AI-generated roadmaps — built uniquely for them, with real-time coaching, skill-tracking, and job-focused outcomes.",
+    "Switchhere helps people switch or upgrade their careers through personalized, AI-generated roadmaps, with real-time coaching, progress-tracking, and best learning resources online.",
+  keywords: [
+    "career switch",
+    "career upgrade",
+    "AI-generated roadmap",
+    "real-time coaching",
+    "progress tracking",
+    "learning resources",
+    "personalized learning",
+    "career development",
+  ],
 };
 
 export default function RootLayout({ children }) {
