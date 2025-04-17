@@ -2,7 +2,7 @@
 
 Switchhere helps people switch or upgrade their careers through personalized, AI-generated roadmaps, with real-time coaching, progress-tracking, and best learning resources online.
 
-![SwitchHere Logo](/public/logo.png)
+![SwitchHere](/public/brand.png)
 
 ## About SwitchHere
 
@@ -46,8 +46,8 @@ Stay motivated with visual progress tracking and celebrate milestones as you com
 5. Open [http://localhost:3000](http://localhost:3000) in your browser
 
 ## Or Login with demo creds
-## demo@demo.com
-## Demo@123
+demo@demo.com
+Demo@123
 
 ## License
 
@@ -55,4 +55,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Contact
 
-For any questions or support, please contact us at support@switchhere.com
+For any questions or support, please contact us at abhiborana.a@gmail.com
