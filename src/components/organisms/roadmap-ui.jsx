@@ -7,6 +7,7 @@ import { ChevronRightIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef } from "react";
 import { toast } from "sonner";
+import { Confetti } from "../magicui/confetti";
 import { Badge } from "../ui/badge";
 
 const RoadmapUi = ({ roadmap, roadmapId, disabled = false }) => {
@@ -107,7 +108,7 @@ const RoadmapUi = ({ roadmap, roadmapId, disabled = false }) => {
           .map((step, index) => (
             <div
               onClick={() => handleOnClick(step)}
-              key={step.id}
+              key={`step-${step.id}-${index}`}
               id={step.id}
               className={cn(
                 "cursor-pointer flex flex-col gap-2 relative w-2/5 border bg-neutral-100 rounded-2xl p-4 hover:shadow-md transition-all duration-200 ease-in-out hover:bg-neutral-50 break-all",

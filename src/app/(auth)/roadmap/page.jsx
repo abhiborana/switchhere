@@ -41,7 +41,6 @@ const RoadmapCreate = () => {
   const [status, setStatus] = useState(null);
 
   const [trending, setTrending] = useState([]);
-  console.debug(`🚀 ~ RoadmapCreate ~ trending:`, trending);
 
   const { isLoading, submit, object } = experimental_useObject({
     api: "/api/roadmap",

@@ -65,7 +65,7 @@ const LearningPage = ({ params }) => {
         .from("youtube")
         .insert(videos)
         .select();
-      console.log("🚀 ~ SAVING VIDEOS TO SUPABASE ~ error:", error);
+      console.debug("🚀 ~ SAVING VIDEOS TO SUPABASE ~ error:", error);
       setVideos(videos);
       setCurrentVideo(videos[0]);
     } else {
