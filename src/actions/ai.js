@@ -6,7 +6,7 @@ import { generateObject } from "ai";
 
 export const getTrendingCareers = async () => {
   const { object } = await generateObject({
-    model: google("gemini-2.0-flash-exp"),
+    model: google("gemini-2.5-flash"),
     prompt:
       "Generate a list of trending careers accross all sectors in india in 2025.",
     schema: trendingCareersSchema,

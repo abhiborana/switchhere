@@ -10,7 +10,7 @@ export async function POST(req) {
     await req.json();
 
   const result = streamObject({
-    model: google("gemini-2.0-flash-exp"),
+    model: google("gemini-2.5-flash"),
     prompt: `Create a personalized roadmap for someone who wants to become a ${toBecome} in ${hoursPerDay} hours per day. They have ${currentExperience} experience.`,
     schema: roadmapSchema,
   });
